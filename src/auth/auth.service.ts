@@ -19,6 +19,23 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  async validateUser(username: string, password: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: username },
+    });
+
+    if (!user) return null;
+
+    const isValidPassword = await comparePasswordHelper(
+      password,
+      user?.password as string,
+    );
+
+    if (!isValidPassword) return null;
+
+    return user;
+  }
+
   async register(registerUserDto: RegisterUserDto) {
     const { name, email, password } = registerUserDto;
     if (!name || !email || !password) {
@@ -63,6 +80,7 @@ export class AuthService {
 
   async login(loginUserDto: LoginUserDto) {
     const { email, password } = loginUserDto;
+
     if (!email || !password) {
       throw new BadGatewayException('Required fields are missing');
     }
@@ -70,6 +88,7 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({
       where: { email },
     });
+
     if (!user) {
       throw new BadRequestException('User not found');
     }
@@ -85,13 +104,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const accessToken = this.jwtService.sign(
-      { userId: user.id, email: user.email },
-      {
-        secret: process.env.JWT_ACCESS_TOKEN_SECRET,
-        expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRED,
-      },
-    );
+    const accessToken = this.jwtService.sign({
+      userId: user.id,
+      email: user.email,
+    });
 
     const { password: _, ...rest } = user;
 
