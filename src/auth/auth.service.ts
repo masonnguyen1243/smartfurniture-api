@@ -1,13 +1,15 @@
-import { RegisterUserDto } from '@/auth/dto/auth.dto';
+import { LoginUserDto, RegisterUserDto } from '@/auth/dto/auth.dto';
 import { PrismaService } from '@/prisma.service';
 import {
   BadGatewayException,
   BadRequestException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { hashPasswordHelper } from '@/helpers/utils';
+import { comparePasswordHelper, hashPasswordHelper } from '@/helpers/utils';
 import { MailerService } from '@nestjs-modules/mailer';
+import { log } from 'console';
 
 @Injectable()
 export class AuthService {
@@ -56,5 +58,38 @@ export class AuthService {
     });
 
     return { user, success: true, message: 'User registered successfully' };
+  }
+
+  async login(loginUserDto: LoginUserDto) {
+    const { email, password } = loginUserDto;
+    if (!email || !password) {
+      throw new BadGatewayException('Required fields are missing');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    if (!user.isActive) {
+      throw new UnauthorizedException('Your account is not active');
+    }
+
+    const isValidPassword = await comparePasswordHelper(
+      password,
+      user.password as string,
+    );
+    if (!isValidPassword) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const { password: _, ...rest } = user;
+
+    return {
+      success: true,
+      message: 'User logged in successfully',
+      user: rest,
+    };
   }
 }

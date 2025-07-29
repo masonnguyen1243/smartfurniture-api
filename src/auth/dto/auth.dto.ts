@@ -12,3 +12,13 @@ export class RegisterUserDto {
   @IsNotEmpty({ message: 'Password is required' })
   password: string;
 }
+
+export class LoginUserDto {
+  @IsNotEmpty({ message: 'Email is required' })
+  @IsEmail({}, { message: 'Email must be a valid email address' })
+  email: string;
+
+  @IsNotEmpty({ message: 'Password is required' })
+  @IsString()
+  password: string;
+}
