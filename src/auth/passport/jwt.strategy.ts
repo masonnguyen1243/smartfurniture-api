@@ -19,7 +19,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req) => req?.cookies?.accessToken,
+      ]),
       ignoreExpiration: false,
       secretOrKey: jwtSecret,
     });
@@ -30,7 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       where: { id: payload.sub },
     });
 
-    console.log('payload validate', payload);
+    console.error('payload validate', payload);
 
     if (!user) {
       throw new UnauthorizedException('User not found');

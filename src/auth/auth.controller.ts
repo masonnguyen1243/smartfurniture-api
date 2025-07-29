@@ -1,8 +1,17 @@
-import { Controller, Post, Body, Req, Get, Res } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  Get,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from '@/auth/auth.service';
 import { LoginUserDto, RegisterUserDto } from '@/auth/dto/auth.dto';
 import { Public } from '@/decorators/customize';
 import { Response } from 'express';
+import { JwtAuthGuard } from './passport/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -50,5 +59,11 @@ export class AuthController {
         success: false,
       });
     }
+  }
+
+  @Get('profile')
+  getProfile(@Req() req) {
+    console.log(req.user);
+    return req.user;
   }
 }
