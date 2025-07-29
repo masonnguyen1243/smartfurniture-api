@@ -1,4 +1,14 @@
-import { Controller, Post, Body, Req, Get, Res, Put } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  Get,
+  Res,
+  Put,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthService } from '@/auth/auth.service';
 import { LoginUserDto, RegisterUserDto } from '@/auth/dto/auth.dto';
 import { Public } from '@/decorators/customize';
@@ -15,10 +25,7 @@ export class AuthController {
       const result = await this.authService.register(registerUserDto);
       return res.status(200).json(result);
     } catch (error) {
-      return res.status(error.status || 500).json({
-        message: error.message || 'Internal Server Error',
-        success: false,
-      });
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -36,10 +43,7 @@ export class AuthController {
 
       return res.status(200).json(result);
     } catch (error) {
-      return res.status(error.status || 500).json({
-        message: error.message || 'Internal Server Error',
-        success: false,
-      });
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -53,10 +57,7 @@ export class AuthController {
 
       return res.status(200).json(result);
     } catch (error) {
-      return res.status(error.status || 500).json({
-        message: error.message || 'Internal Server Error',
-        success: false,
-      });
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

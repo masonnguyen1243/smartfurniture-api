@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Put, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Put,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { UserService } from '@/modules/user/user.service';
 import { UpdateUserDto } from '@/modules/user/dto/user.dto';
 
@@ -25,10 +36,18 @@ export class UserController {
 
       return res.status(200).json(user);
     } catch (error) {
-      return res.status(error.status || 500).json({
-        message: error.message || 'Internal Server Error',
-        success: false,
-      });
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Delete('delete/:id')
+  async deleteUser(@Param('id') id: string) {
+    try {
+      await this.userService.deleteUser(id);
+
+      return { message: 'Deleted successfully!' };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
