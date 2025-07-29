@@ -5,13 +5,14 @@ import {
   Req,
   Get,
   Res,
-  UseGuards,
+  Put,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from '@/auth/auth.service';
 import { LoginUserDto, RegisterUserDto } from '@/auth/dto/auth.dto';
 import { Public } from '@/decorators/customize';
 import { Response } from 'express';
-import { JwtAuthGuard } from './passport/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -19,8 +20,13 @@ export class AuthController {
 
   @Post('register')
   @Public()
-  register(@Body() registerUserDto: RegisterUserDto) {
-    return this.authService.register(registerUserDto);
+  async register(@Body() registerUserDto: RegisterUserDto, @Res() res) {
+    try {
+      const result = await this.authService.register(registerUserDto);
+      return res.status(200).json(result);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Post('login')
@@ -37,10 +43,7 @@ export class AuthController {
 
       return res.status(200).json(result);
     } catch (error) {
-      return res.status(error.status || 500).json({
-        message: error.message || 'Internal Server Error',
-        success: false,
-      });
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -54,16 +57,7 @@ export class AuthController {
 
       return res.status(200).json(result);
     } catch (error) {
-      return res.status(error.status || 500).json({
-        message: error.message || 'Internal Server Error',
-        success: false,
-      });
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
-
-  @Get('profile')
-  getProfile(@Req() req) {
-    console.log(req.user);
-    return req.user;
   }
 }

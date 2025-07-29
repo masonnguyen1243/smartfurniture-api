@@ -32,12 +32,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       where: { id: payload.sub },
     });
 
-    console.error('payload validate', payload);
-
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
 
-    return user;
+    return { userId: payload.sub, email: payload.email };
   }
 }
