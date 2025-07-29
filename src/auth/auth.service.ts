@@ -19,9 +19,9 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, password: string) {
+  async validateUser(email: string, password: string) {
     const user = await this.prisma.user.findUnique({
-      where: { email: username },
+      where: { email },
     });
 
     if (!user) return null;
@@ -105,7 +105,7 @@ export class AuthService {
     }
 
     const accessToken = this.jwtService.sign({
-      userId: user.id,
+      sub: user.id,
       email: user.email,
     });
 
@@ -117,5 +117,9 @@ export class AuthService {
       user: rest,
       accessToken,
     };
+  }
+
+  async logout(): Promise<{ message: string; success: boolean }> {
+    return { message: 'User logged out successfully', success: true };
   }
 }
