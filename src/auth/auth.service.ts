@@ -9,13 +9,14 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { comparePasswordHelper, hashPasswordHelper } from '@/helpers/utils';
 import { MailerService } from '@nestjs-modules/mailer';
-import { log } from 'console';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private readonly mailerService: MailerService,
+    private jwtService: JwtService,
   ) {}
 
   async register(registerUserDto: RegisterUserDto) {
@@ -84,12 +85,21 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
+    const accessToken = this.jwtService.sign(
+      { userId: user.id, email: user.email },
+      {
+        secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+        expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRED,
+      },
+    );
+
     const { password: _, ...rest } = user;
 
     return {
       success: true,
-      message: 'User logged in successfully',
+      message: 'Logged in successfully',
       user: rest,
+      accessToken,
     };
   }
 }
