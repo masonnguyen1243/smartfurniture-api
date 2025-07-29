@@ -1,17 +1,8 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Req,
-  Get,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Body, Req, Get, Res, Put } from '@nestjs/common';
 import { AuthService } from '@/auth/auth.service';
 import { LoginUserDto, RegisterUserDto } from '@/auth/dto/auth.dto';
 import { Public } from '@/decorators/customize';
 import { Response } from 'express';
-import { JwtAuthGuard } from './passport/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -19,8 +10,16 @@ export class AuthController {
 
   @Post('register')
   @Public()
-  register(@Body() registerUserDto: RegisterUserDto) {
-    return this.authService.register(registerUserDto);
+  async register(@Body() registerUserDto: RegisterUserDto, @Res() res) {
+    try {
+      const result = await this.authService.register(registerUserDto);
+      return res.status(200).json(result);
+    } catch (error) {
+      return res.status(error.status || 500).json({
+        message: error.message || 'Internal Server Error',
+        success: false,
+      });
+    }
   }
 
   @Post('login')
@@ -59,11 +58,5 @@ export class AuthController {
         success: false,
       });
     }
-  }
-
-  @Get('profile')
-  getProfile(@Req() req) {
-    console.log(req.user);
-    return req.user;
   }
 }
