@@ -1,14 +1,49 @@
 import { Module } from '@nestjs/common';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaService } from '@/prisma.service';
 import { AuthModule } from '@/auth/auth.module';
 import { UserService } from '@/modules/user/user.service';
 import { UserModule } from '@/modules/user/user.module';
 
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+
 @Module({
-  imports: [AuthModule, UserModule, ConfigModule.forRoot({ isGlobal: true })],
+  imports: [
+    AuthModule,
+    UserModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        transport: {
+          host: 'smtp.gmail.com',
+          port: 465,
+          secure: true,
+          // ignoreTLS: true,
+          auth: {
+            user: configService.get<string>('MAIL_USER'),
+            pass: configService.get<string>('MAIL_PASSWORD'),
+          },
+        },
+        defaults: {
+          from: '"No Reply" <no-reply@smartfurniture>',
+        },
+        // preview: true,
+        template: {
+          // dir: join(__dirname, 'mail/templates'),
+          dir: process.cwd() + '/src/mail/templates/',
+          adapter: new HandlebarsAdapter(),
+          options: {
+            strict: true,
+          },
+        },
+      }),
+      inject: [ConfigService],
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService, PrismaService, UserService],
 })

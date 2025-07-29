@@ -7,10 +7,14 @@ import {
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { hashPasswordHelper } from '@/helpers/utils';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly mailerService: MailerService,
+  ) {}
 
   async register(registerUserDto: RegisterUserDto) {
     const { name, email, password } = registerUserDto;
@@ -39,6 +43,17 @@ export class AuthService {
     if (!user) {
       throw new BadRequestException('User registration failed');
     }
+
+    //Send email verification
+    this.mailerService.sendMail({
+      to: user.email as string,
+      subject: 'Activate your account',
+      template: 'register',
+      context: {
+        name: user?.name ?? user?.email,
+        activationCode: codeId,
+      },
+    });
 
     return { user, success: true, message: 'User registered successfully' };
   }
