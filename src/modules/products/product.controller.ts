@@ -6,21 +6,30 @@ import {
   Delete,
   Param,
   Body,
+  Query,
 } from '@nestjs/common';
-import { ProductService } from './product.service';
+import { ProductService } from '@/modules/products/product.service';
+import { CreateProductDto } from '@/modules/products/dto/product.dto';
+import { Public } from '@/decorators/customize';
 
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  create(@Body() body: any) {
-    return this.productService.create(body);
+  create(@Body() createProductDto: CreateProductDto) {
+    return this.productService.create(createProductDto);
   }
 
   @Get()
-  findAll() {
-    return this.productService.findAll();
+  @Public()
+  findAll(
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ) {
+    const page = parseInt(current) || 1;
+    const size = parseInt(pageSize) || 10;
+    return this.productService.findAll(page, size);
   }
 
   @Get(':id')

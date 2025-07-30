@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { CategoriesDto } from '@/modules/categories/dto/categories.dto';
 
 @Injectable()
 export class CategoriesService {
   constructor(private prisma: PrismaService) {}
 
-  create(data: any) {
-    return this.prisma.categories.create({ data });
+  create(categoriesDto: CategoriesDto) {
+    return this.prisma.categories.create({ data: categoriesDto });
   }
 
   findAll() {
@@ -17,12 +18,14 @@ export class CategoriesService {
     return this.prisma.categories.findUnique({ where: { id } });
   }
 
-  update(id: string, data: any) {
-    return this.prisma.categories.update({ where: { id }, data });
+  update(id: string, categoriesDto: CategoriesDto) {
+    return this.prisma.categories.update({
+      where: { id },
+      data: categoriesDto,
+    });
   }
 
   remove(id: string) {
     return this.prisma.categories.delete({ where: { id } });
   }
 }
-

@@ -1,17 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CategoriesDto } from '@/modules/categories/dto/categories.dto';
+import { CreateProductDto } from './dto/product.dto';
+import { contains } from 'class-validator';
 
 @Injectable()
 export class ProductService {
   constructor(private prisma: PrismaService) {}
 
-  create(data: any) {
-    return this.prisma.product.create({ data });
+  create(createProductDto: CreateProductDto) {
+    return this.prisma.product.create({ data: createProductDto });
   }
 
-  findAll() {
-    return this.prisma.product.findMany();
+  async findAll(current: number, pageSize: number) {
+    const limit = pageSize || 10;
+    const page = current || 1;
+    const skip = (page - 1) * limit;
+
+    const totalItems = await this.prisma.product.count();
+    const totalPages = Math.ceil(totalItems / limit);
+
+    const result = await this.prisma.product.findMany({
+      skip,
+      take: limit,
+      include: {
+        category: true,
+      },
+    });
+
+    return {
+      data: result,
+      currentPage: page,
+      totalPages,
+      totalItems,
+    };
   }
 
   findOne(id: string) {
