@@ -1,6 +1,9 @@
 import { PrismaService } from '@/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { AddToCartDto } from '@/modules/cart/dto/cart.dto';
+import {
+  AddToCartDto,
+  UpadteCartQuantityDto,
+} from '@/modules/cart/dto/cart.dto';
 
 @Injectable()
 export class CartService {
@@ -43,5 +46,39 @@ export class CartService {
     });
 
     return { message: 'Add to cart successfully!', result };
+  }
+
+  async updateCartQuantity(updateCartQuantity: UpadteCartQuantityDto) {
+    const { userId, productId, quantityChange } = updateCartQuantity;
+    const existingCart = await this.prisma.cart.findFirst({
+      where: { userId, productId },
+      include: { product: true },
+    });
+
+    if (!existingCart) {
+      throw new NotFoundException('Product is not in cart');
+    }
+
+    const newQuantity = existingCart.quantity + quantityChange;
+
+    if (newQuantity <= 0) {
+      await this.prisma.cart.delete({
+        where: { id: existingCart.id },
+      });
+      return { message: 'Product removed from cart' };
+    }
+
+    const updatedCart = await this.prisma.cart.update({
+      where: { id: existingCart.id },
+      data: {
+        quantity: newQuantity,
+        totalPrice: existingCart.product.price * newQuantity,
+      },
+      include: {
+        product: true,
+      },
+    });
+
+    return updatedCart;
   }
 }
