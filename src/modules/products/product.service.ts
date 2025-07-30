@@ -60,7 +60,14 @@ export class ProductService {
     };
   }
 
-  remove(id: string) {
-    return this.prisma.product.delete({ where: { id } });
+  async remove(id: string) {
+    const product = await this.prisma.product.findUnique({ where: { id } });
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    await this.prisma.product.delete({ where: { id } });
+
+    return { message: 'Delete successfully' };
   }
 }
