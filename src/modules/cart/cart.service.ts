@@ -81,4 +81,15 @@ export class CartService {
 
     return updatedCart;
   }
+
+  async removeCart(id: string) {
+    const cart = await this.prisma.cart.findUnique({ where: { id } });
+    if (!cart) {
+      throw new NotFoundException('Cart item not found');
+    }
+
+    await this.prisma.cart.delete({ where: { id } });
+
+    return { message: 'Remove cart successfully!' };
+  }
 }

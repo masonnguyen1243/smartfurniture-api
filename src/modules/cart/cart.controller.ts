@@ -5,6 +5,8 @@ import {
   HttpException,
   HttpStatus,
   Put,
+  Delete,
+  Param,
 } from '@nestjs/common';
 import { CartService } from '@/modules/cart/cart.service';
 import {
@@ -35,5 +37,10 @@ export class CartController {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  @Delete(':id')
+  async removeCart(@Param('id') id: string) {
+    return this.cartService.removeCart(id);
   }
 }
