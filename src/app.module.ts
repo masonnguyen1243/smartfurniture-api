@@ -14,14 +14,15 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from '@/auth/passport/jwt-auth.guard';
-import { JwtStrategy } from './auth/passport/jwt.strategy';
+import { CartModule } from '@/modules/cart/cart.module';
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
-    CategoriesModule, 
+    CategoriesModule,
     ProductModule,
+    CartModule,
     ConfigModule.forRoot({ isGlobal: true }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
@@ -62,6 +63,5 @@ import { JwtStrategy } from './auth/passport/jwt.strategy';
       useClass: JwtAuthGuard,
     },
   ],
-
 })
 export class AppModule {}
