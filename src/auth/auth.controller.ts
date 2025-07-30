@@ -2,15 +2,17 @@ import {
   Controller,
   Post,
   Body,
-  Req,
   Get,
   Res,
-  Put,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from '@/auth/auth.service';
-import { LoginUserDto, RegisterUserDto } from '@/auth/dto/auth.dto';
+import {
+  LoginUserDto,
+  RegisterUserDto,
+  VerifyUserDto,
+} from '@/auth/dto/auth.dto';
 import { Public } from '@/decorators/customize';
 import { Response } from 'express';
 
@@ -56,6 +58,16 @@ export class AuthController {
       res.clearCookie('accessToken');
 
       return res.status(200).json(result);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Public()
+  @Post('verify-account')
+  async verifyAccount(@Body() verifyUserDto: VerifyUserDto) {
+    try {
+      return await this.authService.verifyAccount(verifyUserDto);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
