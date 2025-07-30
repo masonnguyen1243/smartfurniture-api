@@ -1,9 +1,14 @@
-import { LoginUserDto, RegisterUserDto } from '@/auth/dto/auth.dto';
+import {
+  LoginUserDto,
+  RegisterUserDto,
+  VerifyUserDto,
+} from '@/auth/dto/auth.dto';
 import { PrismaService } from '@/prisma.service';
 import {
   BadGatewayException,
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
@@ -121,5 +126,34 @@ export class AuthService {
 
   async logout(): Promise<{ message: string; success: boolean }> {
     return { message: 'User logged out successfully', success: true };
+  }
+
+  async verifyAccount(verifyUserDto: VerifyUserDto) {
+    const { email, verifyToken } = verifyUserDto;
+
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (verifyToken !== user.verityToken) {
+      throw new BadRequestException('Invalid token');
+    }
+
+    if (user.isActive) {
+      throw new BadRequestException(
+        'Your account is already active! Please login',
+      );
+    }
+
+    await this.prisma.user.update({
+      where: { email },
+      data: {
+        isActive: true,
+        verityToken: null,
+      },
+    });
+
+    return { success: true, message: 'Account verified successfully!' };
   }
 }

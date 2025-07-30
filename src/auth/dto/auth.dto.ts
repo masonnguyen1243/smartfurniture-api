@@ -22,3 +22,13 @@ export class LoginUserDto {
   @IsString()
   password: string;
 }
+
+export class VerifyUserDto {
+  @IsNotEmpty({ message: 'Email is required' })
+  @IsEmail({}, { message: 'Email must be a valid email address' })
+  email: string;
+
+  @IsNotEmpty({ message: 'Token is required' })
+  @IsString()
+  verifyToken: string;
+}
