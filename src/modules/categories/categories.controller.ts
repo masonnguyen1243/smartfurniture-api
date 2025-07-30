@@ -1,28 +1,40 @@
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
-import { CategoriesService } from './categories.service';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+} from '@nestjs/common';
+import { CategoriesService } from '@/modules/categories/categories.service';
+import { CategoriesDto } from '@/modules/categories/dto/categories.dto';
+import { Public } from '@/decorators/customize';
 
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  create(@Body() body: any) {
-    return this.categoriesService.create(body);
+  create(@Body() categoriesDto: CategoriesDto) {
+    return this.categoriesService.create(categoriesDto);
   }
 
-  @Get()
+  @Get('all')
+  @Public()
   findAll() {
     return this.categoriesService.findAll();
   }
 
   @Get(':id')
+  @Public()
   findOne(@Param('id') id: string) {
     return this.categoriesService.findOne(id);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() body: any) {
-    return this.categoriesService.update(id, body);
+  update(@Param('id') id: string, @Body() categories: CategoriesDto) {
+    return this.categoriesService.update(id, categories);
   }
 
   @Delete(':id')
@@ -30,4 +42,3 @@ export class CategoriesController {
     return this.categoriesService.remove(id);
   }
 }
-
