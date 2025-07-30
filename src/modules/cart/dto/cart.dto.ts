@@ -13,3 +13,16 @@ export class AddToCartDto {
   @Min(1)
   quantity: number;
 }
+
+export class UpadteCartQuantityDto {
+  @IsNotEmpty()
+  @IsString()
+  productId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  userId: string;
+
+  @IsNumber()
+  quantityChange: number;
+}
