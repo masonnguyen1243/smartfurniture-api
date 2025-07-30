@@ -15,6 +15,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from '@/auth/passport/jwt-auth.guard';
 import { CartModule } from '@/modules/cart/cart.module';
+import { WishlistModule } from '@/modules/wishlist/wishlist.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CartModule } from '@/modules/cart/cart.module';
     CategoriesModule,
     ProductModule,
     CartModule,
+    WishlistModule,
     ConfigModule.forRoot({ isGlobal: true }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
