@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+
+import { CategoriesModule } from './modules/categories/categories.module';
+import { ProductModule } from './modules/products/product.module';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -17,6 +20,8 @@ import { JwtStrategy } from './auth/passport/jwt.strategy';
   imports: [
     AuthModule,
     UserModule,
+    CategoriesModule, 
+    ProductModule,
     ConfigModule.forRoot({ isGlobal: true }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
@@ -57,5 +62,6 @@ import { JwtStrategy } from './auth/passport/jwt.strategy';
       useClass: JwtAuthGuard,
     },
   ],
+
 })
 export class AppModule {}
