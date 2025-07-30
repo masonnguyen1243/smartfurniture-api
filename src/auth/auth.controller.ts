@@ -15,7 +15,7 @@ import {
 } from '@/auth/dto/auth.dto';
 import { Public } from '@/decorators/customize';
 import { Response } from 'express';
-
+import * as ms from 'ms';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -38,7 +38,8 @@ export class AuthController {
       const result = await this.authService.login(loginUserDto);
 
       res.cookie('accessToken', result?.accessToken, {
-        maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
+        // maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
+        maxAge: ms('1d'),
         httpOnly: true,
         sameSite: 'strict',
       });
