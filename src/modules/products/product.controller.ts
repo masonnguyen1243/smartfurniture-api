@@ -9,7 +9,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { ProductService } from '@/modules/products/product.service';
-import { CreateProductDto } from '@/modules/products/dto/product.dto';
+import {
+  CreateProductDto,
+  UpdateProductDto,
+} from '@/modules/products/dto/product.dto';
 import { Public } from '@/decorators/customize';
 
 @Controller('products')
@@ -38,8 +41,8 @@ export class ProductController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() body: any) {
-    return this.productService.update(id, body);
+  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+    return this.productService.update(id, updateProductDto);
   }
 
   @Delete(':id')
