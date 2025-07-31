@@ -11,7 +11,7 @@ import {
 import { CartService } from '@/modules/cart/cart.service';
 import {
   AddToCartDto,
-  UpadteCartQuantityDto,
+  UpdateCartQuantityDto,
 } from '@/modules/cart/dto/cart.dto';
 
 @Controller('cart')
@@ -29,7 +29,7 @@ export class CartController {
   }
 
   @Put()
-  async updateCartQuantity(@Body() updateCartQuantity: UpadteCartQuantityDto) {
+  async updateCartQuantity(@Body() updateCartQuantity: UpdateCartQuantityDto) {
     try {
       const result =
         await this.cartService.updateCartQuantity(updateCartQuantity);
