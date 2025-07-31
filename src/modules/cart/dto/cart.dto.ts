@@ -18,7 +18,7 @@ export class AddToCartDto {
   quantity: number;
 }
 
-export class UpadteCartQuantityDto {
+export class UpdateCartQuantityDto {
   @ApiProperty({ example: '918390281938921' })
   @IsNotEmpty()
   @IsString()
