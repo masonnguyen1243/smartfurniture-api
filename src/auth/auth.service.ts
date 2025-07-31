@@ -24,23 +24,6 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!user) return null;
-
-    const isValidPassword = await comparePasswordHelper(
-      password,
-      user?.password as string,
-    );
-
-    if (!isValidPassword) return null;
-
-    return user;
-  }
-
   async register(registerUserDto: RegisterUserDto) {
     const { name, email, password } = registerUserDto;
     if (!name || !email || !password) {
