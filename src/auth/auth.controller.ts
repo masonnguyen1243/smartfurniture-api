@@ -31,7 +31,7 @@ export class AuthController {
     }
   }
 
-  @Post('login')
+  @Post('loginnn')
   @Public()
   async login(@Body() loginUserDto: LoginUserDto, @Res() res: Response) {
     try {
