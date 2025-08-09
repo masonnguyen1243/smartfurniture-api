@@ -14,6 +14,11 @@ export class CreateProductDto {
   @ApiProperty({ example: 321 })
   @IsOptional()
   @IsNumber()
+  discount?: number;
+
+  @ApiProperty({ example: 321 })
+  @IsOptional()
+  @IsNumber()
   oldPrice?: number;
 
   @ApiProperty({ example: 321 })
@@ -47,6 +52,11 @@ export class UpdateProductDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiProperty({ example: 321 })
+  @IsOptional()
+  @IsNumber()
+  discount?: number;
 
   @ApiProperty({ example: 321 })
   @IsOptional()

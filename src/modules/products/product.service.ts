@@ -11,7 +11,7 @@ export class ProductService {
   }
 
   async findAll(current: number, pageSize: number) {
-    const limit = pageSize || 10;
+    const limit = pageSize || 12;
     const page = current || 1;
     const skip = (page - 1) * limit;
 
