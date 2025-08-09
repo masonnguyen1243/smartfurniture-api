@@ -31,8 +31,14 @@ export class ProductController {
     @Query('pageSize') pageSize: string,
   ) {
     const page = parseInt(current) || 1;
-    const size = parseInt(pageSize) || 10;
+    const size = parseInt(pageSize) || 12;
     return this.productService.findAll(page, size);
+  }
+
+  @Get('related/:id')
+  @Public()
+  findRelated(@Param('id') id: string) {
+    return this.productService.findRelated(id);
   }
 
   @Get(':id')

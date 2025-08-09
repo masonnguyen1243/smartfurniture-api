@@ -43,6 +43,29 @@ export class ProductService {
     });
   }
 
+  async findRelated(productId: string) {
+    const currentProduct = await this.prisma.product.findUnique({
+      where: { id: productId },
+      select: { category: { select: { id: true, name: true } } },
+    });
+
+    if (!currentProduct) {
+      throw new NotFoundException('Product not found');
+    }
+
+    const relatedProduct = await this.prisma.product.findMany({
+      where: { categoryId: currentProduct.category.id, id: { not: productId } },
+      take: 4,
+      include: {
+        category: {
+          select: { name: true },
+        },
+      },
+    });
+
+    return { relatedProduct, success: true };
+  }
+
   async update(id: string, updateProductDto: UpdateProductDto) {
     const product = await this.prisma.product.findUnique({
       where: { id },
