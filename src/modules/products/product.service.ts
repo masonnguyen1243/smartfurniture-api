@@ -35,11 +35,18 @@ export class ProductService {
   }
 
   findOne(id: string) {
-    return this.prisma.product.findUnique({ where: { id } });
+    return this.prisma.product.findUnique({
+      where: { id },
+      include: {
+        category: { select: { name: true } },
+      },
+    });
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
-    const product = await this.prisma.product.findUnique({ where: { id } });
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+    });
     if (!product) {
       throw new NotFoundException('Product not found');
     }

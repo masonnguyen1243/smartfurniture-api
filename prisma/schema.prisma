@@ -26,9 +26,11 @@ model Product {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String?
+  oldPrice    Float?
   price       Float
   imageUrl    String?
   categoryId  String     @db.ObjectId
+  sku         String?
   category    Categories @relation(fields: [categoryId], references: [id])
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt

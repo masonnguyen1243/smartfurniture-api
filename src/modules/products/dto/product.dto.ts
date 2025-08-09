@@ -8,14 +8,23 @@ export class CreateProductDto {
   name: string;
 
   @ApiProperty({ example: 'Product desc' })
-  @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiProperty({ example: 321 })
+  @IsOptional()
+  @IsNumber()
+  oldPrice?: number;
 
   @ApiProperty({ example: 321 })
   @IsNotEmpty()
   @IsNumber()
   price: number;
+
+  @ApiProperty({ example: 321 })
+  @IsNotEmpty()
+  @IsString()
+  sku: string;
 
   @ApiProperty({ example: 'image url' })
   @IsOptional()
@@ -42,7 +51,17 @@ export class UpdateProductDto {
   @ApiProperty({ example: 321 })
   @IsOptional()
   @IsNumber()
+  oldPrice?: number;
+
+  @ApiProperty({ example: 321 })
+  @IsOptional()
+  @IsNumber()
   price?: number;
+
+  @ApiProperty({ example: 321 })
+  @IsOptional()
+  @IsString()
+  sku?: string;
 
   @ApiProperty({ example: 'image url' })
   @IsOptional()
