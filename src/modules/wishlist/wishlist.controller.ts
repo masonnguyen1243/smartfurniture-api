@@ -9,12 +9,14 @@ import {
 } from '@nestjs/common';
 import { WishlistService } from '@/modules/wishlist/wishlist.service';
 import { CreateWishlistDto } from '@/modules/wishlist/dto/wishlist.dto';
+import { Public } from '@/decorators/customize';
 
 @Controller('wishlist')
 export class WishlistController {
   constructor(private readonly wishlistService: WishlistService) {}
 
   @Post()
+  @Public()
   async addToWishlist(@Body() createWishlistDto: CreateWishlistDto) {
     try {
       return this.wishlistService.addToWishlist(createWishlistDto);
@@ -24,6 +26,7 @@ export class WishlistController {
   }
 
   @Delete(':id')
+  @Public()
   async removeWishlist(@Param('id') id: string) {
     try {
       return this.wishlistService.removeWishlist(id);
